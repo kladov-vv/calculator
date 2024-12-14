@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 62.5%;
+    padding: 0;
+    margin: 0;
+}
+
+.calculator {
+    background-color: lightgray;
+    height: 30rem;
+    width: 20rem;
+}
+
+.display {
+    color: aquamarine;
+    background-color: black;
+    height: 5rem;
+    width: 20rem;
+}
+
+.keyboard {
+    display: flex;
+}
+
+button {
+    height: 4rem;
+    width: 4rem;
+}
