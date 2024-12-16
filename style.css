@@ -1,29 +1,32 @@
 * {
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 62.5%;
+    font-size: 18px;
     padding: 0;
     margin: 0;
 }
 
 .calculator {
     background-color: lightgray;
-    height: 30rem;
-    width: 20rem;
+    height: min-content;
+    width: min-content;
 }
 
 .display {
-    color: aquamarine;
+    color: blue;
     background-color: black;
-    height: 5rem;
-    width: 20rem;
+    height: 80px;
+    width: 320px;
 }
 
 .keyboard {
     display: flex;
+    flex-wrap: wrap;
+    height: 400px;
+    width: 320px;
 }
 
 button {
-    height: 4rem;
-    width: 4rem;
+    height: 75px;
+    width: 75px;
 }
