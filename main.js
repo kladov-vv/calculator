@@ -1,16 +1,25 @@
 let firstNumber;
 let secondNumber;
 let operator;
+const display = document.querySelector('.display');
+const keyboard = document.querySelector('.keyboard');
+
+keyboard.addEventListener('click', keyboardInput);
+
+function keyboardInput(event) {
+    let target = event.target;
+    console.log(target);
+}
 
 function operate(firstNumber, secondNumber, operator){
     switch (operator) {
-        case add:
+        case 'add':
             return add(firstNumber, secondNumber);
-        case subtract:
+        case 'subtract':
             return subtract(firstNumber, secondNumber);
-        case multiply:
+        case 'multiply':
             return multiply(firstNumber, secondNumber);
-        case divide:
+        case 'divide':
             return divide(firstNumber, secondNumber);
     }
 }
