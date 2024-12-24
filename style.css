@@ -5,28 +5,35 @@
     padding: 0;
     margin: 0;
 }
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .calculator {
     background-color: lightgray;
     height: min-content;
     width: min-content;
     padding: 10px;
+    border: solid 2px silver;
+    border-radius: 15px;
 }
 
 .display {
+    font-size: 60px;
     color: lightblue;
     background-color: black;
     height: 75px;
-    margin-bottom: 10px;
     padding: 5px;
+    margin-bottom: 10px;
     border: solid 5px gray;
     border-radius: 10px;
-    font-size: 60px;
+
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
-
 }
 
 .keyboard,
@@ -49,17 +56,13 @@
     flex-wrap: wrap;
 }
 
-#equal {
-    background-color: orange;
-}
-
-#zero {
-    width: 160px;
-}
-
 button {
     height: 75px;
     width: 75px;
     border-radius: 37.5px;
-    border: solid 1px;
+    border: solid 1px gray;
+}
+
+.equal > button {
+    background-color: orange;
 }

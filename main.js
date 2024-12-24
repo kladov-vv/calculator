@@ -8,7 +8,9 @@ keyboard.addEventListener('click', keyboardInput);
 
 function keyboardInput(event) {
     let target = event.target;
-    console.log(target);
+    if (target.tagName === 'BUTTON') {
+        console.log(target.parentElement);
+    }
 }
 
 function operate(firstNumber, secondNumber, operator){
