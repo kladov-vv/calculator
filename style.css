@@ -5,8 +5,10 @@
     padding: 0;
     margin: 0;
 }
+
 body {
     height: 100vh;
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,22 +16,20 @@ body {
 
 .calculator {
     background-color: lightgray;
-    height: min-content;
-    width: min-content;
-    padding: 10px;
     border: solid 2px silver;
     border-radius: 15px;
+    padding: 10px;
 }
 
 .display {
+    height: 75px;
     font-size: 60px;
     color: lightblue;
     background-color: black;
-    height: 75px;
-    padding: 5px;
-    margin-bottom: 10px;
     border: solid 5px gray;
     border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
 
     display: flex;
     justify-content: flex-end;
@@ -37,32 +37,41 @@ body {
 }
 
 .keyboard,
-.left-keys,
-.right-keys,
 .actions,
 .numbers,
 .operators {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
+    
 }
 
-.left-keys,
-.right-keys {
+.keyboard {
+    width: calc(75px * 4 + 10px * 3);
+    height: calc(75px * 5 + 10px * 4);
+
     flex-direction: column;
 }
 
-.numbers,
+.numbers {
+    width: calc(75px * 3 + 10px * 2);;
+}
+
 .operators {
-    flex-wrap: wrap;
+    width: 75px;
 }
 
 button {
     height: 75px;
     width: 75px;
-    border-radius: 37.5px;
     border: solid 1px gray;
+    border-radius: 37.5px;
 }
 
 .equal > button {
     background-color: orange;
+}
+
+#zero {
+    width: 160px;
 }
