@@ -1,72 +1,92 @@
-let firstNumber = '';
-let secondNumber = '';
-let operator = '';
-let currentNumber = '';
 const display = document.querySelector('.display');
 const keyboard = document.querySelector('.keyboard');
+let currentNum = '';
+let firstNum = '';
+let secondNum = '';
+let operator = '';
 
 keyboard.addEventListener('click', keyboardInput);
 
 function keyboardInput(event) {
-    let target = event.target;
+    console.log(target.id);
     switch (target.parentElement.className) {
         case 'numbers':
-            console.log('number');
-            populateDisplay(target.textContent);
+            if (operator === '') {
+                firstNum = populateDisplay(target.textContent);
+            } else {
+                secondNum = populateDisplay(target.textContent);
+            }
             break;
         case 'operators':
-            console.log('operator');
-            if (firstNumber === '' && secondNumber === '') {
-                operator = target.textContent;
-                firstNumber = currentNumber;
-                currentNumber = '';
-            }
-            if (firstNumber != '') {
-                secondNumber = currentNumber;
-                
-                currentNumber = operate(firstNumber, secondNumber, operator);
-                display.textContent = currentNumber;
-
-                firstNumber = currentNumber;
-                secondNumber = '';
-                operator = target.textContent;
-                currentNumber = '';
+            if (secondNum === '') {
+                operator = target.id;
+                currentNum = '';
+            } else {
+                currentNum = '';
+                firstNum = populateDisplay( operate(firstNum, secondNum, operator) );
+                secondNum = ''
+                operator = target.id;
+                currentNum = '';
             }
             break;
         case 'equal':
-            console.log('equal');
-            if (firstNumber != '') {
-                secondNumber = currentNumber;
-                
-                currentNumber = operate(firstNumber, secondNumber, operator);
-                display.textContent = currentNumber;
-
-                firstNumber = currentNumber;
-                secondNumber = '';
-                operator = '';
-                currentNumber = '';
-            }
+            currentNum = '';
+            firstNum = populateDisplay( operate(firstNum, secondNum, operator) );
+            secondNum = ''
+            operator = '';
+            currentNum = '';
             break;
+        case 'actions':
+            switch (target.id) {
+                case 'clear':
+                    clear();
+                    break;
+                case 'backspace':
+                    backspace();
+                    break; 
+            }
+            break;      
+        }
+}
+
+// ACTIONS
+function backspace() {
+    currentNum = currentNum.slice(0, currentNum.length - 1);
+    if (currentNum.length < 1) {
+        display.textContent = 0;
+    } else {
+        display.textContent = currentNum;
     }
 }
 
-function populateDisplay(number) {
-    currentNumber += number;
-    display.textContent = currentNumber;
+function clear() {
+    display.textContent = 0;
+    currentNum = '';
+    firstNum = '';
+    secondNum = '';
+    operator = '';
 }
 
-function operate(firstNumber, secondNumber, operator){
-    firstNumber = Number(firstNumber);
-    secondNumber = Number(secondNumber);
+// DISPLAY BEHAVIOR
+function populateDisplay(num) {
+    currentNum += num;
+    display.textContent = currentNum;
+    return currentNum;
+}
+
+// MATH FUNCTIONS
+function operate(a, b, operator) {
+    a = Number(a);
+    b = Number(b);
     switch (operator) {
-        case '+':
-            return add(firstNumber, secondNumber);
-        case '-':
-            return subtract(firstNumber, secondNumber);
-        case '*':
-            return multiply(firstNumber, secondNumber);
-        case '/':
-            return divide(firstNumber, secondNumber);
+        case 'obelus':
+            return divide(a, b);
+        case 'times':
+            return multiply(a, b);
+        case 'minus':
+            return subtract(a, b);
+        case 'plus':
+            return add(a, b);
     }
 }
 
