@@ -1,6 +1,8 @@
 const display = document.querySelector('.display');
 const keyboard = document.querySelector('.keyboard');
-let currentNum = '';
+const operations = document.querySelector('.operations').querySelectorAll('button');
+const maxLength = 9;
+let curNum = '';
 let firstNum = '';
 let secondNum = '';
 let operator = '';
@@ -8,33 +10,33 @@ let operator = '';
 keyboard.addEventListener('click', keyboardInput);
 
 function keyboardInput(event) {
-    console.log(target.id);
+    let target = event.target;
+
+    if (target.nodeName === 'BUTTON') {
+        for (let i = 0; i < operations.length; i++) {
+            operations[i].style.backgroundColor = '';
+        }
+    }
+
     switch (target.parentElement.className) {
         case 'numbers':
-            if (operator === '') {
-                firstNum = populateDisplay(target.textContent);
-            } else {
-                secondNum = populateDisplay(target.textContent);
-            }
+            if ((firstNum != '' && operator === '') // after calculation
+                || Number(firstNum) === NaN) firstNum = ''; // after error
+            populateDisplay(target.textContent);
             break;
-        case 'operators':
-            if (secondNum === '') {
-                operator = target.id;
-                currentNum = '';
-            } else {
-                currentNum = '';
-                firstNum = populateDisplay( operate(firstNum, secondNum, operator) );
-                secondNum = ''
-                operator = target.id;
-                currentNum = '';
-            }
+        case 'operations':
+            target.style.backgroundColor = '#e3e3e3';
+            assignNum();
+            calculate();
+            operator = target.id;
+            console.log(`operator: ${operator}`);
             break;
         case 'equal':
-            currentNum = '';
-            firstNum = populateDisplay( operate(firstNum, secondNum, operator) );
-            secondNum = ''
-            operator = '';
-            currentNum = '';
+            if (firstNum != '' && operator != '' && curNum != '') {
+                assignNum();
+                calculate();  
+                operator = '';
+            }
             break;
         case 'actions':
             switch (target.id) {
@@ -44,64 +46,109 @@ function keyboardInput(event) {
                 case 'backspace':
                     backspace();
                     break; 
+                case 'plus-minus':
+                    changeOfSign();
+                    break;
             }
             break;      
         }
 }
 
-// ACTIONS
-function backspace() {
-    currentNum = currentNum.slice(0, currentNum.length - 1);
-    if (currentNum.length < 1) {
-        display.textContent = 0;
-    } else {
-        display.textContent = currentNum;
+// CALCULATOR BEHAVIOR
+function populateDisplay(num) {
+    if (curNum.length >= maxLength) return;
+    if (num === '0' && curNum === '0') return;
+    if (num === '.') {
+        if (curNum.includes('.')) return;
+        if (curNum === '') num = '0.';
+    }
+    curNum += num;
+    display.textContent = curNum;
+}
+
+function assignNum() {
+    if (firstNum === '') {
+        firstNum = (curNum === '') ? '0' : curNum;
+        console.log(`firstNum: ${firstNum}`);
+    } else if (firstNum != '' && curNum != '') {
+        secondNum = curNum;
+        console.log(`secondNum: ${secondNum}`);
+    }
+    curNum = '';
+}
+
+function calculate() {
+    if (firstNum != '' && secondNum != '' && operator != '') {
+        firstNum = roundNum(operate(firstNum, secondNum, operator));
+        secondNum = '';
+        display.textContent = firstNum;
+        console.log(`result (firstNum): ${firstNum}`);
     }
 }
 
+// ACTIONS
 function clear() {
-    display.textContent = 0;
-    currentNum = '';
+    curNum = '';
     firstNum = '';
     secondNum = '';
     operator = '';
+    display.textContent = '0'; 
 }
 
-// DISPLAY BEHAVIOR
-function populateDisplay(num) {
-    currentNum += num;
-    display.textContent = currentNum;
-    return currentNum;
+function backspace() {
+    if (curNum.length > 1) {
+        curNum = curNum.slice(0, curNum.length - 1);
+        display.textContent = curNum;
+    } else {
+        curNum = '';
+        display.textContent = '0';
+    }
 }
 
-// MATH FUNCTIONS
+function changeOfSign() {
+    if (curNum != '0' && curNum != '') {
+        if (curNum.includes('-')) {
+            curNum = curNum.slice(1);
+        } else {
+            curNum = '-' + curNum; 
+        }
+        display.textContent = curNum;
+    }
+}
+
+// MATH
 function operate(a, b, operator) {
     a = Number(a);
     b = Number(b);
     switch (operator) {
-        case 'obelus':
-            return divide(a, b);
-        case 'times':
-            return multiply(a, b);
-        case 'minus':
-            return subtract(a, b);
-        case 'plus':
-            return add(a, b);
+        case 'divide':
+            return (b === 0) ? 'Nooo!': a / b;
+        case 'multiply':
+            return a * b;
+        case 'subtract':
+            return a - b;
+        case 'add':
+            return a + b;
     }
 }
 
-function add(a, b) {
-    return a + b;
-}
-
-function subtract(a, b) {
-    return a - b;
-}
-
-function multiply(a, b) {
-    return a * b;
-}
-
-function divide(a, b) {
-    return a / b;
+function roundNum(num) {
+    if (num.toString().length > maxLength) {
+        if ((num > 1 || num < -1) 
+            && !Number.isInteger(num) 
+            && num.toString().split('.')[0].length < (maxLength + 1)) 
+        {
+            for (let i = num.toString().split('.')[1].length;
+                num.toString().length > maxLength; 
+                i--)
+            {
+                num = Math.round((num + Number.EPSILON) * (10**i)) / (10**i);
+            }
+        } else {
+            for (i = 5; num.toString().length > maxLength; i--) {
+                num = Number.parseFloat(num).toExponential(i);
+            }
+        }
+    }
+    return num;
 }
