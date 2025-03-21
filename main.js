@@ -75,7 +75,6 @@ function calculator() {
         assignCurrentNum();
         calculateOutput();
         operator = buttonValue;
-        
     }
     if (buttonClass === 'equal') {
         if (firstNum !== '' && operator !== '' && currentNum !== '') {
