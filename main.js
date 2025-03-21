@@ -1,118 +1,149 @@
-const display = document.querySelector('.display');
-const keyboard = document.querySelector('.keyboard');
+const uiDisplay = document.querySelector('.display');
+const uiKeyboard = document.querySelector('.keyboard');
 const operations = document.querySelector('.operations').querySelectorAll('button');
-const maxLength = 9;
-let curNum = '';
+const maxOutputLength = 9;
+let buttonValue = '';
+let buttonClass = '';
+let currentNum = '';
 let firstNum = '';
 let secondNum = '';
 let operator = '';
 
-keyboard.addEventListener('click', keyboardInput);
+// EVENTS
+uiKeyboard.addEventListener('click', uiKeyboardInput);
+document.addEventListener('keydown', keyboardInput);
+
+// INPUT
+function uiKeyboardInput(event) {
+    if (event.target.nodeName != 'BUTTON') return;
+    if (event.target.parentElement.className === 'numbers') {
+        buttonValue = event.target.textContent;
+    }
+    if (event.target.parentElement.className === 'operations' ||
+        event.target.parentElement.className === 'actions') 
+    {
+        buttonValue = event.target.id;
+    }
+    buttonClass = event.target.parentElement.className;
+    calculator();
+    buttonValue = '';
+    buttonClass = ''; 
+}
 
 function keyboardInput(event) {
-    let target = event.target;
-
-    if (target.nodeName === 'BUTTON') {
-        for (let i = 0; i < operations.length; i++) {
-            operations[i].style.backgroundColor = '';
-        }
+    if ((event.key >= '0' && event.key <= '9') 
+        || event.key === '.' || event.key === ',') 
+    {
+        buttonValue = event.key;
+        buttonClass = 'numbers';
     }
-
-    switch (target.parentElement.className) {
-        case 'numbers':
-            if ((firstNum != '' && operator === '') // after calculation
-                || Number(firstNum) === NaN) firstNum = ''; // after error
-            populateDisplay(target.textContent);
-            break;
-        case 'operations':
-            target.style.backgroundColor = '#e3e3e3';
-            assignNum();
-            calculate();
-            operator = target.id;
-            console.log(`operator: ${operator}`);
-            break;
-        case 'equal':
-            if (firstNum != '' && operator != '' && curNum != '') {
-                assignNum();
-                calculate();  
-                operator = '';
-            }
-            break;
-        case 'actions':
-            switch (target.id) {
-                case 'clear':
-                    clear();
-                    break;
-                case 'backspace':
-                    backspace();
-                    break; 
-                case 'plus-minus':
-                    changeOfSign();
-                    break;
-            }
-            break;      
-        }
+    if (['/', '*', '-', '+'].indexOf(event.key) > -1) {
+        if (event.key === '/') buttonValue = 'divide';
+        if (event.key === '*') buttonValue = 'multiply';
+        if (event.key === '-') buttonValue = 'subtract';
+        if (event.key === '+') buttonValue = 'add';
+        buttonClass = 'operations';
+    }  
+    if (event.key === 'Backspace') {
+        buttonValue = 'backspace';
+        buttonClass = 'actions';   
+    }
+    if (event.key === 'Enter') {
+        buttonClass = 'equal';
+    }
+    calculator();
+    buttonValue = '';
+    buttonClass = '';
 }
 
 // CALCULATOR BEHAVIOR
+function calculator() {
+    for (let i = 0; i < operations.length; i++) {
+        operations[i].style.backgroundColor = '';
+    }
+    if (buttonClass === 'numbers') {
+        if ((firstNum !== '' && operator === '') // after calculation
+            || Number(firstNum) === NaN) {
+                firstNum = ''; // if error
+            }
+        populateDisplay(buttonValue);
+    }
+    if (buttonClass === 'operations') {
+        document.getElementById(buttonValue).style.backgroundColor = '#e3e3e3';
+        assignCurrentNum();
+        calculateOutput();
+        operator = buttonValue;
+        
+    }
+    if (buttonClass === 'equal') {
+        if (firstNum !== '' && operator !== '' && currentNum !== '') {
+            assignCurrentNum();
+            calculateOutput();  
+            operator = '';
+        }
+    }
+    if (buttonClass === 'actions') {
+        if (buttonValue === 'clear') clear();
+        if (buttonValue === 'backspace') backspace();
+        if (buttonValue === 'plus-minus') changeSign(); 
+    }
+}
+
 function populateDisplay(num) {
-    if (curNum.length >= maxLength) return;
-    if (num === '0' && curNum === '0') return;
-    if (num === '.') {
-        if (curNum.includes('.')) return;
-        if (curNum === '') num = '0.';
+    if (currentNum.length >= maxOutputLength) return;
+    if (num === '0' && currentNum === '0') return;
+    if (num === '.' || num === ',') {
+        if (currentNum.includes('.')) return;
+        num = (currentNum === '') ? '0,' : '.';
     }
-    curNum += num;
-    display.textContent = curNum;
+    currentNum += num;
+    uiDisplay.textContent = currentNum;
 }
 
-function assignNum() {
+function assignCurrentNum() {
     if (firstNum === '') {
-        firstNum = (curNum === '') ? '0' : curNum;
-        console.log(`firstNum: ${firstNum}`);
-    } else if (firstNum != '' && curNum != '') {
-        secondNum = curNum;
-        console.log(`secondNum: ${secondNum}`);
-    }
-    curNum = '';
+        firstNum = (currentNum === '') ? '0' : currentNum;
+    } else if (firstNum != '' && currentNum != '') {
+        secondNum = currentNum;
+    }   
+    currentNum = '';
 }
 
-function calculate() {
-    if (firstNum != '' && secondNum != '' && operator != '') {
+function calculateOutput() {
+    if (firstNum !== '' && secondNum !== '' && operator !== '') {
         firstNum = roundNum(operate(firstNum, secondNum, operator));
         secondNum = '';
-        display.textContent = firstNum;
-        console.log(`result (firstNum): ${firstNum}`);
+        uiDisplay.textContent = firstNum;
     }
 }
 
 // ACTIONS
 function clear() {
-    curNum = '';
+    currentNum = '';
     firstNum = '';
     secondNum = '';
     operator = '';
-    display.textContent = '0'; 
+    uiDisplay.textContent = '0';
 }
 
 function backspace() {
-    if (curNum.length > 1) {
-        curNum = curNum.slice(0, curNum.length - 1);
-        display.textContent = curNum;
+    if (currentNum.length > 1) {
+        currentNum = currentNum.slice(0, currentNum.length - 1);
+        uiDisplay.textContent = currentNum;
     } else {
-        curNum = '';
-        display.textContent = '0';
+        currentNum = '';
+        uiDisplay.textContent = '0';
     }
 }
 
-function changeOfSign() {
-    if (curNum != '0' && curNum != '') {
-        if (curNum.includes('-')) {
-            curNum = curNum.slice(1);
+function changeSign() {
+    if (currentNum !== '0' && currentNum !== '') {
+        if (currentNum.includes('-')) {
+            currentNum = currentNum.slice(1);
         } else {
-            curNum = '-' + curNum; 
+            currentNum = '-' + currentNum; 
         }
-        display.textContent = curNum;
+        uiDisplay.textContent = currentNum;
     }
 }
 
@@ -122,7 +153,7 @@ function operate(a, b, operator) {
     b = Number(b);
     switch (operator) {
         case 'divide':
-            return (b === 0) ? 'Nooo!': a / b;
+            return (b === 0) ? 'No-o-o!': a / b;
         case 'multiply':
             return a * b;
         case 'subtract':
@@ -133,19 +164,19 @@ function operate(a, b, operator) {
 }
 
 function roundNum(num) {
-    if (num.toString().length > maxLength) {
-        if ((num > 1 || num < -1) 
+    if (num.toString().length > maxOutputLength) {
+        if ((num > 1 || num < -1)
             && !Number.isInteger(num) 
-            && num.toString().split('.')[0].length < (maxLength + 1)) 
+            && num.toString().split('.')[0].length < (maxOutputLength + 1)) 
         {
             for (let i = num.toString().split('.')[1].length;
-                num.toString().length > maxLength; 
+                num.toString().length > maxOutputLength; 
                 i--)
             {
                 num = Math.round((num + Number.EPSILON) * (10**i)) / (10**i);
             }
         } else {
-            for (i = 5; num.toString().length > maxLength; i--) {
+            for (i = 5; num.toString().length > maxOutputLength; i--) {
                 num = Number.parseFloat(num).toExponential(i);
             }
         }
