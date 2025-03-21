@@ -62,13 +62,15 @@ function calculator() {
         operations[i].style.backgroundColor = '';
     }
     if (buttonClass === 'numbers') {
-        if ((firstNum !== '' && operator === '') // after calculation
-            || Number(firstNum) === NaN) {
-                firstNum = ''; // if error
-            }
+        if ((firstNum !== '' && operator === '') 
+            || firstNum === 'No-o-o!')
+        {
+            firstNum = ''; // after calculation
+        }
         populateDisplay(buttonValue);
     }
     if (buttonClass === 'operations') {
+        if (firstNum === 'No-o-o!') return;
         document.getElementById(buttonValue).style.backgroundColor = '#e3e3e3';
         assignCurrentNum();
         calculateOutput();
