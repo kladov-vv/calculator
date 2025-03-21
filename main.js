@@ -16,14 +16,17 @@ document.addEventListener('keydown', keyboardInput);
 // INPUT
 function uiKeyboardInput(event) {
     if (event.target.nodeName != 'BUTTON') return;
+    
     if (event.target.parentElement.className === 'numbers') {
         buttonValue = event.target.textContent;
     }
+    
     if (event.target.parentElement.className === 'operations' ||
         event.target.parentElement.className === 'actions') 
     {
         buttonValue = event.target.id;
     }
+
     buttonClass = event.target.parentElement.className;
     calculator();
     buttonValue = '';
@@ -37,6 +40,7 @@ function keyboardInput(event) {
         buttonValue = event.key;
         buttonClass = 'numbers';
     }
+    
     if (['/', '*', '-', '+'].indexOf(event.key) > -1) {
         if (event.key === '/') buttonValue = 'divide';
         if (event.key === '*') buttonValue = 'multiply';
@@ -44,13 +48,16 @@ function keyboardInput(event) {
         if (event.key === '+') buttonValue = 'add';
         buttonClass = 'operations';
     }  
+    
     if (event.key === 'Backspace') {
         buttonValue = 'backspace';
         buttonClass = 'actions';   
     }
+    
     if (event.key === 'Enter') {
         buttonClass = 'equal';
     }
+
     calculator();
     buttonValue = '';
     buttonClass = '';
@@ -61,6 +68,7 @@ function calculator() {
     for (let i = 0; i < operations.length; i++) {
         operations[i].style.backgroundColor = '';
     }
+    
     if (buttonClass === 'numbers') {
         if ((firstNum !== '' && operator === '') 
             || firstNum === 'No-o-o!')
@@ -69,13 +77,16 @@ function calculator() {
         }
         populateDisplay(buttonValue);
     }
+
     if (buttonClass === 'operations') {
         if (firstNum === 'No-o-o!') return;
+        
         document.getElementById(buttonValue).style.backgroundColor = '#e3e3e3';
         assignCurrentNum();
         calculateOutput();
         operator = buttonValue;
     }
+
     if (buttonClass === 'equal') {
         if (firstNum !== '' && operator !== '' && currentNum !== '') {
             assignCurrentNum();
@@ -83,20 +94,26 @@ function calculator() {
             operator = '';
         }
     }
+
     if (buttonClass === 'actions') {
         if (buttonValue === 'clear') clear();
+        
         if (buttonValue === 'backspace') backspace();
+        
         if (buttonValue === 'plus-minus') changeSign(); 
     }
 }
 
 function populateDisplay(num) {
     if (currentNum.length >= maxOutputLength) return;
+    
     if (num === '0' && currentNum === '0') return;
+    
     if (num === '.' || num === ',') {
         if (currentNum.includes('.')) return;
         num = (currentNum === '') ? '0,' : '.';
     }
+
     currentNum += num;
     uiDisplay.textContent = currentNum;
 }
@@ -107,6 +124,7 @@ function assignCurrentNum() {
     } else if (firstNum != '' && currentNum != '') {
         secondNum = currentNum;
     }   
+    
     currentNum = '';
 }
 
